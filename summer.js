@@ -5,10 +5,10 @@ const container = document.querySelector(".main");
 
 async function fetchData() {
     try {
-        let url = `https://newsapi.org/v2/top-headlines?country=us&pageSize=100 &apiKey=${apikey}`;
+        let url = `https://newsapi.org/v2/top-headlines?country=us&pageSize=100&apiKey=${apikey}`;
         let fetchData = await fetch(url);
         let data = await fetchData.json();
-        return data.articles;  // Fixed property name from 'article' to 'articles'
+        return data.articles;
     } catch(err) {
         console.log(err);
     }
@@ -16,24 +16,20 @@ async function fetchData() {
 
 submit.addEventListener("click", async(e) => {
     e.preventDefault();
-    const querry= search.value.trim();
-    if(querry){
+    const query = search.value.trim();
+    if(query){
         try{
-            const articles = await fetchnewsData(querry);
+            const articles = await fetchNewsData(query);
             displayDatas(articles);
-            
-        }catch(err){
+        } catch(err){
             console.log(err);
         }
     }
-    
-
 });
 
 function displayDatas(articles) {
     container.innerHTML = "";
     articles.forEach((article) => {
-        // Only create and append the div if the image URL is not null
         if (article.urlToImage) {
             const div = document.createElement("div");
             div.classList.add("card");
@@ -54,15 +50,16 @@ function displayDatas(articles) {
             div.appendChild(image);
             div.appendChild(title);
             div.appendChild(description);
-              div.addEventListener("click", () => {
+
+            div.addEventListener("click", () => {
                 window.open(article.url, "_blank");
-              });
+            });
             container.append(div);
         }
     });
 }
 
-( async () => {
+(async () => {
     try {
         const articles = await fetchData();
         displayDatas(articles);
@@ -70,14 +67,14 @@ function displayDatas(articles) {
         console.error(err);
     }
 })();
-async function fetchnewsData(querry){
+
+async function fetchNewsData(query) {
     try {
-        let url = `https://newsapi.org/v2/everything?q=${querry}&pageSize=30&apiKey=${apikey}`;
+        let url = `https://newsapi.org/v2/everything?q=${query}&pageSize=30&apiKey=${apikey}`;
         let fetchData = await fetch(url);
         let data = await fetchData.json();
-        return data.articles;  // Fixed property name from 'article' to 'articles'
+        return data.articles;
     } catch(err) {
         console.log(err);
     }
-
 }
