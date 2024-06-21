@@ -6,22 +6,26 @@ const container = document.querySelector(".main");
 async function fetchData() {
     try {
         let url = `https://newsapi.org/v2/top-headlines?country=us&pageSize=100&apiKey=${apikey}`;
-        let fetchData = await fetch(url);
-        let data = await fetchData.json();
+        let response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        let data = await response.json();
         return data.articles;
-    } catch(err) {
+    } catch (err) {
         console.log(err);
+        return [];
     }
 }
 
-submit.addEventListener("click", async(e) => {
+submit.addEventListener("click", async (e) => {
     e.preventDefault();
     const query = search.value.trim();
-    if(query){
-        try{
+    if (query) {
+        try {
             const articles = await fetchNewsData(query);
             displayDatas(articles);
-        } catch(err){
+        } catch (err) {
             console.log(err);
         }
     }
@@ -29,6 +33,10 @@ submit.addEventListener("click", async(e) => {
 
 function displayDatas(articles) {
     container.innerHTML = "";
+    if (!articles || articles.length === 0) {
+        container.innerHTML = "<p>No articles found</p>";
+        return;
+    }
     articles.forEach((article) => {
         if (article.urlToImage) {
             const div = document.createElement("div");
@@ -63,7 +71,7 @@ function displayDatas(articles) {
     try {
         const articles = await fetchData();
         displayDatas(articles);
-    } catch(err) {
+    } catch (err) {
         console.error(err);
     }
 })();
@@ -71,10 +79,14 @@ function displayDatas(articles) {
 async function fetchNewsData(query) {
     try {
         let url = `https://newsapi.org/v2/everything?q=${query}&pageSize=30&apiKey=${apikey}`;
-        let fetchData = await fetch(url);
-        let data = await fetchData.json();
+        let response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        let data = await response.json();
         return data.articles;
-    } catch(err) {
+    } catch (err) {
         console.log(err);
+        return [];
     }
 }
